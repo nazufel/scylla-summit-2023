@@ -1,0 +1,37 @@
+# docker-compose.yaml
+
+# original source - https://github.com/scylladb/scylla-code-samples/blob/master/mms/docker-compose.yml
+
+# --------------------------------------------------------------------------- #
+version: "3"
+
+services:
+
+  scylla_01:
+    container_name: scylla-01
+    image: scylladb/scylla:4.5.0
+    restart: always
+    command: --seeds=scylla_01,scylla_node_02 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      - "./scylla/:/etc/scylla/"
+      # - "./scylla/cassandra-rackdc.properties.dc:/etc/scylla/cassandra-rackdc.properties"
+      # - "./scylla/seed-data.txt:/seed-data.txt"
+
+  scylla_02:
+    container_name: scylla-02
+    image: scylladb/scylla:4.5.0
+    restart: always
+    command: --seeds=scylla-scylla_01,scylla_node_02 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      - "./scylla/:/etc/scylla/"
+    #   - "./scylla/scylla.yaml:/etc/scylla/scylla.yaml"
+    #   - "./scylla/cassandra-rackdc.properties.dc:/etc/scylla/cassandra-rackdc.properties"
+
+  scylla_03:
+    container_name: scylla-03
+    image: scylladb/scylla:4.5.0
+    restart: always
+    command: --seeds=scylla_01,scylla_node_02 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      - "./scylla/:/etc/scylla/"
+#EOF
