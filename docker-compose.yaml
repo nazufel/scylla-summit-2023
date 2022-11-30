@@ -1,37 +1,43 @@
-# docker-compose.yaml
-
-# original source - https://github.com/scylladb/scylla-code-samples/blob/master/mms/docker-compose.yml
-
-# --------------------------------------------------------------------------- #
 version: "3"
 
 services:
 
-  scylla_01:
-    container_name: scylla-01
+  scylla-node1:
+    container_name: scylla-node1
     image: scylladb/scylla:4.5.0
     restart: always
-    command: --seeds=scylla_01,scylla_node_02 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
     volumes:
-      - "./scylla/:/etc/scylla/"
-      # - "./scylla/cassandra-rackdc.properties.dc:/etc/scylla/cassandra-rackdc.properties"
-      # - "./scylla/seed-data.txt:/seed-data.txt"
+      - "${PWD}/scylla_configs/scylla.yaml:/etc/scylla/scylla.yaml"
+      - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk1:/etc/scylla/cassandra-rackdc.properties"
+      - "${PWD}/scylla_configs/mutant-data.txt:/mutant-data.txt"
+    networks:
+      web:
 
-  scylla_02:
-    container_name: scylla-02
+  scylla-node2:
+    container_name: scylla-node2
     image: scylladb/scylla:4.5.0
     restart: always
-    command: --seeds=scylla-scylla_01,scylla_node_02 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
     volumes:
-      - "./scylla/:/etc/scylla/"
-    #   - "./scylla/scylla.yaml:/etc/scylla/scylla.yaml"
-    #   - "./scylla/cassandra-rackdc.properties.dc:/etc/scylla/cassandra-rackdc.properties"
+      - "${PWD}/scylla_configs/scylla.yaml:/etc/scylla/scylla.yaml"
+      - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk2:/etc/scylla/cassandra-rackdc.properties"
+      - "${PWD}/scylla_configs/mutant-data.txt:/mutant-data.txt"
+    networks:
+      web:
 
-  scylla_03:
-    container_name: scylla-03
+  scylla-node3:
+    container_name: scylla-node3
     image: scylladb/scylla:4.5.0
     restart: always
-    command: --seeds=scylla_01,scylla_node_02 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
     volumes:
-      - "./scylla/:/etc/scylla/"
-#EOF
+      - "${PWD}/scylla_configs/scylla.yaml:/etc/scylla/scylla.yaml"
+      - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk3:/etc/scylla/cassandra-rackdc.properties"
+      - "${PWD}/scylla_configs/mutant-data.txt:/mutant-data.txt"
+    networks:
+      web:
+
+networks:
+  web:
+    driver: bridge
