@@ -2,6 +2,47 @@ version: "3"
 
 services:
 
+ # controller container holds ansible
+  controller:
+    # build a docker image when compose is invoked
+    # build:
+      # if a build cache for ubuntu:20.04 exists,
+      # then use that to save time
+      # cache_from:
+      #   - "ubuntu:20.04"
+      # the directory where the dockerfile exists
+      # to execute the build context
+      # context: .
+      # # the location of the dockerfile to build
+      # dockerfile: "./dockerfile"
+    # the command to run when the container is executed
+    # this command will start the container's ssh server
+    # so ansible has something to talk to
+    command: ["/usr/sbin/sshd","-D"]
+    # name the container for service discovery as well
+    # as this will be the name output from `docker compose ps`
+    container_name: "controller"
+    # name the image created from the build step above
+    # image: "ansible-demo"
+    image: "ubuntu:20.04"
+    # attach the running container to the below network(s)
+    networks:
+      # put the container in the network named "demo"
+      # this network is defined below
+      demo:
+        # set up service discovery in the network to reference
+        # this container by the name "controller"
+        aliases:
+          - "controller"
+    # attach any volumes inside of the container. This is
+    # done so that ansible files on the host system
+    # can be accessed from within the controller container
+    # since ansible will be ran from here becuase it
+    # will be on the same docker network as the other 
+    # containers being orchestrated and demonstrated.
+    volumes:
+        - "./:/root/ansible"
+
   scylla-node1:
     container_name: scylla-node1
     image: scylladb/scylla:4.5.0
@@ -11,8 +52,9 @@ services:
       - "${PWD}/scylla_configs/scylla.yaml:/etc/scylla/scylla.yaml"
       - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk1:/etc/scylla/cassandra-rackdc.properties"
       - "${PWD}/scylla_configs/mutant-data.txt:/mutant-data.txt"
+      - "${PWD}/authorized_keys:/root/.ssh/" # load ssh keys into 
     networks:
-      web:
+      demo:
 
   scylla-node2:
     container_name: scylla-node2
@@ -24,7 +66,7 @@ services:
       - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk2:/etc/scylla/cassandra-rackdc.properties"
       - "${PWD}/scylla_configs/mutant-data.txt:/mutant-data.txt"
     networks:
-      web:
+      demo:
 
   scylla-node3:
     container_name: scylla-node3
@@ -36,8 +78,8 @@ services:
       - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk3:/etc/scylla/cassandra-rackdc.properties"
       - "${PWD}/scylla_configs/mutant-data.txt:/mutant-data.txt"
     networks:
-      web:
+      demo:
 
 networks:
-  web:
+  demo:
     driver: bridge
