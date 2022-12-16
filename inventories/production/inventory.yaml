@@ -1,0 +1,17 @@
+
+# all groups and hosts in this inventory
+all:
+  # just a list of hosts
+  hosts:
+    scylla_node_01:
+      ansible_host: "scylla-node1.scylla-summit-2023_demo"
+    scylla_node_02:
+      ansible_host: "scylla-node2.scylla-summit-2023_demo"
+    scylla_node_03:
+      ansible_host: "scylla-node3.scylla-summit-2023_demo"
+
+vars:
+  ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+  ansible_user: "root"
+  ansible_python_interpreter: "/usr/bin/python3"
+  ansible_ssh_private_key_file: "{{ playbook_dir }}/ssh/id_rsa"
