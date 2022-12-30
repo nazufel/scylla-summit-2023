@@ -16,15 +16,13 @@ services:
       # # the location of the dockerfile to build
       dockerfile: "./dockerfile"
     # the command to run when the container is executed
-    # this command will start the container's ssh server
-    # so ansible has something to talk to
     command: ["/usr/bin/sleep", "100000000"]
     # name the container for service discovery as well
     # as this will be the name output from `docker compose ps`
     container_name: "controller"
     # name the image created from the build step above
     # image: "ansible-demo"
-    image: "controler"
+    image: scylla-node:v13
     # attach the running container to the below network(s)
     networks:
       # put the container in the network named "demo"
@@ -45,20 +43,20 @@ services:
 
   scylla-node1:
     container_name: scylla-node1
-    image: scylladb/scylla:4.5.0
+    image: scylla-node:v13
     restart: always
     command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
     volumes:
       - "${PWD}/scylla_configs/scylla.yaml:/etc/scylla/scylla.yaml"
       - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk1:/etc/scylla/cassandra-rackdc.properties"
       - "${PWD}/scylla_configs/mutant-data.txt:/mutant-data.txt"
-      - "${PWD}/ssh/:/root/.ssh/" # load ssh keys into 
+      # - "${PWD}/ssh/:/root/.ssh/" # load ssh and authorized_keys file onto machines for ssh
     networks:
       demo:
 
   scylla-node2:
     container_name: scylla-node2
-    image: scylladb/scylla:4.5.0
+    image: scylla-node:v13
     restart: always
     command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
     volumes:
@@ -70,7 +68,7 @@ services:
 
   scylla-node3:
     container_name: scylla-node3
-    image: scylladb/scylla:4.5.0
+    image: scylla-node:v13
     restart: always
     command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
     volumes:
