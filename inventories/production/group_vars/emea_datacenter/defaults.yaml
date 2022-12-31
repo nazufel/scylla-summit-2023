@@ -1,0 +1,7 @@
+# inventories/production/group_vars/emea_datacenter/defaults.yaml
+
+# install apt packages at specific versions
+apt_package_versions:
+  fail2ban=1.0.1
+  scylla=4.6
+#EOF
