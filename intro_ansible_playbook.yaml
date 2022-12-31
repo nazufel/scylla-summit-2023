@@ -1,14 +1,23 @@
-
+# intro_ansible_playbook.yaml
 
 - name: "introduction to ansible"
   hosts: "all"
+  gather_facts: true
 
+  # tasks to run as part of the Play
   tasks:
-
+    
     - name: "copy config file"
       ansible.builtin.copy:
-        src: "foo.conf"
         dest: "/etc/foo.conf"
         group: "root"
         mode: 0644
         owner: "root"
+        src: "foo.conf"
+    
+    - name: "restart foo service"
+      ansible.builtin.systemd:
+        daemon_reload: false
+        enabled: true
+        name: "foo"
+        state: "restarted"
