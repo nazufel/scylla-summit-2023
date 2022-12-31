@@ -23,3 +23,9 @@
         enabled: true
         name: "foo"
         state: "restarted"
+
+    - name: "enable foo setting in Scylla config"
+      ansible.builtin.lineinfile:
+        path: "/etc/scylla/scylla.yaml"
+        regexp: '^foo:'
+        line: "foo: true"
