@@ -15,6 +15,8 @@
         owner: "root"
         src: "foo.conf"
     
+    # restart the foo service to pick
+    # up new config changes
     - name: "restart foo service"
       ansible.builtin.systemd:
         daemon_reload: false
