@@ -1,7 +1,7 @@
+# inventories/production/inventory.yaml
 
 # all groups and hosts in this inventory
 all:
-  # just a list of hosts
   hosts:
     scylla_node_01:
       ansible_host: "scylla-node1.scylla-summit-2023_demo"
