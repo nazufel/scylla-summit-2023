@@ -3,6 +3,12 @@
 # all groups and hosts in this inventory
 all:
   children:
+    # EMEA Datacenter
+    emea_central_datacenter:
+      hosts:
+        scylla-node7.company.com:
+        scylla-node8.company.com:
+        scylla-node9.company.com:
     # US East Datacenter
     us_east_datacenter:
       hosts:
@@ -15,12 +21,6 @@ all:
         scylla-node4.company.com:
         10.249.100.187:
         scylla-node6.company.com:
-    # EMEA Datacenter
-    emea_central_datacenter:
-      hosts:
-        scylla-node7.company.com:
-        scylla-node8.company.com:
-        scylla-node9.company.com:
 
   # inventory variables concerned with how connections should be handled
   vars:
