@@ -1,0 +1,35 @@
+# update_scylla_config_playbook.yaml
+
+# this playbook will upgrade the scylla config file
+
+# --------------------------------------------------------------------------- #
+
+- name: "update scylla config"
+  hosts: "all"
+  gather_facts: true
+  serial: 1
+
+  tasks:
+
+    - name: "check cluster membership"
+      ansible.builtin.command: "nodetool status"
+      register: "nodetool_status"
+      # fail if the output of the "nodetool status" 
+      # command contains any indicators of a any 
+      # nodes being down.
+      failed_when: "('DN' in nodetool_status.stdout) or 
+                    ('?N' in nodetool_status.stdout) or 
+                    ('JN' in nodetool_status.stdout)"
+    
+    - name: "debug cluster membership"
+      ansible.builtin.debug:
+        msg: "{{ nodetool_status }}"
+
+    - name: "update scylla config"
+      ansible.builtin.lineinfile:
+        line: "foo: bar"
+        path: "/etc/scylla/scylla.yaml"
+        regexp: "foo"
+        state: "present"
+
+#EOF
