@@ -5,6 +5,8 @@
 # start with the base image of Ubuntu 20.04 - https://hub.docker.com/_/ubuntu
 FROM scylladb/scylla:4.6.0
 
+RUN sysctl -w fs.aio-max-nr=30000000
+
 # ensure that required directories are created to run the container
 RUN rm -rf /var/run/sshd && mkdir /var/run/sshd
 

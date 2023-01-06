@@ -49,34 +49,46 @@ services:
     volumes:
       - "${PWD}/scylla_configs/scylla.yaml:/etc/scylla/scylla.yaml"
       - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk1:/etc/scylla/cassandra-rackdc.properties"
-      - "${PWD}/scylla_configs/mutant-data.txt:/mutant-data.txt"
-      # - "${PWD}/ssh/:/root/.ssh/" # load ssh and authorized_keys file onto machines for ssh
+    #   - "${PWD}/scylla_configs/mutant-data.txt:/mutant-data.txt"
+    deploy:
+      resources:
+        reservations:
+          cpus: "2"
+          memory: "1G"
     networks:
       demo:
 
-  # scylla-node2:
-  #   container_name: scylla-node2
-  #   image: scylla-node:v13
-  #   restart: always
-  #   command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
-  #   volumes:
-  #     - "${PWD}/scylla_configs/scylla.yaml:/etc/scylla/scylla.yaml"
-  #     - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk2:/etc/scylla/cassandra-rackdc.properties"
-  #     - "${PWD}/scylla_configs/mutant-data.txt:/mutant-data.txt"
-  #   networks:
-  #     demo:
+  scylla-node2:
+    container_name: scylla-node2
+    image: scylla-node:v13
+    restart: always
+    command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      - "${PWD}/scylla_configs/scylla.yaml:/etc/scylla/scylla.yaml"
+      - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk2:/etc/scylla/cassandra-rackdc.properties"
+    deploy:
+      resources:
+        reservations:
+          cpus: "2"
+          memory: "1G"
+    networks:
+      demo:
 
-  # scylla-node3:
-  #   container_name: scylla-node3
-  #   image: scylla-node:v13
-  #   restart: always
-  #   command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
-  #   volumes:
-  #     - "${PWD}/scylla_configs/scylla.yaml:/etc/scylla/scylla.yaml"
-  #     - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk3:/etc/scylla/cassandra-rackdc.properties"
-  #     - "${PWD}/scylla_configs/mutant-data.txt:/mutant-data.txt"
-  #   networks:
-  #     demo:
+  scylla-node3:
+    container_name: scylla-node3
+    image: scylla-node:v13
+    restart: always
+    command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      - "${PWD}/scylla_configs/scylla.yaml:/etc/scylla/scylla.yaml"
+      - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk3:/etc/scylla/cassandra-rackdc.properties"
+    deploy:
+      resources:
+        reservations:
+          cpus: "2"
+          memory: "1G"
+    networks:
+      demo:
 
 networks:
   demo:

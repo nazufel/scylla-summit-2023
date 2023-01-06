@@ -806,4 +806,6 @@ commitlog_total_space_in_mb: -1
 # below.
 #
 # Keep at 12 for new clusters.
-murmur3_partitioner_ignore_msb_bits: 12
+murmur3_partitioner_ignore_msb_bits: 12foo: var
+\nfoo: var
+foo: var

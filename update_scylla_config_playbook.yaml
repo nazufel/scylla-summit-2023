@@ -25,11 +25,29 @@
       ansible.builtin.debug:
         msg: "{{ nodetool_status }}"
 
-    - name: "update scylla config"
-      ansible.builtin.lineinfile:
-        line: "foo: bar"
-        path: "/etc/scylla/scylla.yaml"
-        regexp: "foo"
-        state: "present"
+    # - name: "update scylla config"
+    #   ansible.builtin.lineinfile:
+    #     line: "foo: bar"
+    #     path: "/etc/scylla/scylla.yaml"
+    #     regexp: "^foo"
+    #     state: "present"
+
+    - name: "restart scylla server"
+      ansible.builtin.command: "supervisorctl restart scylla-server"
+      register: scylla_server_status
+
+    - name: "debug scylla status"
+      ansible.builtin.debug:
+        msg: "{{ scylla_server_status }}"
+
+    - name: "check cluster membership"
+      ansible.builtin.command: "nodetool status"
+      register: "nodetool_status"
+      # fail if the output of the "nodetool status" 
+      # command contains any indicators of a any 
+      # nodes being down.
+      failed_when: "('DN' in nodetool_status.stdout) or 
+                    ('?N' in nodetool_status.stdout) or 
+                    ('JN' in nodetool_status.stdout)"
 
 #EOF
