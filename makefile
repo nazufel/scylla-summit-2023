@@ -1,6 +1,6 @@
 image:
 	$(clean_command)
-	docker build -f ./dockerfile -t scylla_node:v1 .
+	sudo docker build -f ./dockerfile -t scylla-node:v1 .
 
 keys:
 	$(clean_command)

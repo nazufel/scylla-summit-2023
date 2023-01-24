@@ -1,20 +1,20 @@
 version: "3"
 
 services:
-
+  client:
+    container_name: "robo-client"
+    image: "teleporttacos/client:v1"
+    depends_on:
+      - server
+    environment:
+      API_SERVER_URL: "server"
+      GRPC_SERVER_LISTEN_PORT: "9999"
+    networks:
+      demo:
+        aliases: 
+          - "robo-client"
  # controller container holds ansible
   controller:
-    # build a docker image when compose is invoked
-    build:
-      # if a build cache for ubuntu:20.04 exists,
-      # then use that to save time
-      # cache_from:
-      #   - "ubuntu:20.04"
-      # the directory where the dockerfile exists
-      # to execute the build context
-      context: .
-      # # the location of the dockerfile to build
-      dockerfile: "./dockerfile"
     # the command to run when the container is executed
     command: ["/usr/bin/sleep", "100000000"]
     # name the container for service discovery as well
@@ -22,7 +22,7 @@ services:
     container_name: "controller"
     # name the image created from the build step above
     # image: "ansible-demo"
-    image: scylla-node:v13
+    image: scylla-node:v1
     # attach the running container to the below network(s)
     networks:
       # put the container in the network named "demo"
@@ -43,13 +43,9 @@ services:
 
   scylla-node1:
     container_name: scylla-node1
-    image: scylla-node:v13
+    image: scylla-node:v1
     restart: always
     command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
-    volumes:
-      - "${PWD}/scylla_configs/scylla.yaml:/etc/scylla/scylla.yaml"
-      - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk1:/etc/scylla/cassandra-rackdc.properties"
-    #   - "${PWD}/scylla_configs/mutant-data.txt:/mutant-data.txt"
     deploy:
       resources:
         reservations:
@@ -60,12 +56,9 @@ services:
 
   scylla-node2:
     container_name: scylla-node2
-    image: scylla-node:v13
+    image: scylla-node:v1
     restart: always
     command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
-    volumes:
-      - "${PWD}/scylla_configs/scylla.yaml:/etc/scylla/scylla.yaml"
-      - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk2:/etc/scylla/cassandra-rackdc.properties"
     deploy:
       resources:
         reservations:
@@ -76,12 +69,9 @@ services:
 
   scylla-node3:
     container_name: scylla-node3
-    image: scylla-node:v13
+    image: scylla-node:v1
     restart: always
     command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
-    volumes:
-      - "${PWD}/scylla_configs/scylla.yaml:/etc/scylla/scylla.yaml"
-      - "${PWD}/scylla_configs/cassandra-rackdc.properties.rk3:/etc/scylla/cassandra-rackdc.properties"
     deploy:
       resources:
         reservations:
@@ -89,6 +79,24 @@ services:
           memory: "1G"
     networks:
       demo:
+
+  server:
+    container_name: "server"
+    image: "teleporttacos/server:v1"
+    depends_on:
+      - scylla-node1
+      - scylla-node2
+      - scylla-node3
+    environment:
+      GRPC_SERVER_LISTEN_PORT: "9999"
+      HTTP_SERVER_LISTEN_PORT: "9080"
+      # SCYLLA_SERVERS: '"scylla-node1", "scylla-node2, "scylla-node3"'
+    networks:
+      demo:
+        aliases: 
+          - "server"
+    ports:
+      - 9080:9080
 
 networks:
   demo:

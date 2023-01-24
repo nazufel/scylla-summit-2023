@@ -25,12 +25,26 @@
       ansible.builtin.debug:
         msg: "{{ nodetool_status }}"
 
-    # - name: "update scylla config"
-    #   ansible.builtin.lineinfile:
-    #     line: "foo: bar"
-    #     path: "/etc/scylla/scylla.yaml"
-    #     regexp: "^foo"
-    #     state: "present"
+    # drain a single node since updating the scylla.yaml
+    # file will require a restart to apply. so draining
+    # the node will make it safe to restart it.
+    - name: "drain the node"
+      ansible.builtin.command: "nodetool drain"
+
+    - name: "check node drain status"
+      ansible.builtin.command: "nodetool status"
+      register: nodetool_drain_status
+
+    - name: "debug drain status"
+      ansible.builtin.debug:
+        msg: "{{ nodetool_drain_status }}"
+
+    - name: "update scylla config"
+      ansible.builtin.lineinfile:
+        line: "foo: bar"
+        path: "/etc/scylla/scylla.yaml"
+        regexp: "^foo"
+        state: "present"
 
     - name: "restart scylla server"
       ansible.builtin.command: "supervisorctl restart scylla-server"
