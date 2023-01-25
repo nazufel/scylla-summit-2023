@@ -2,6 +2,11 @@ version: '3'
 
 tasks:
 
+  # build the custom Docker images needed for the demo
+  build:
+    cmds:
+      - docker build -f ./dockerfile -t scylla-node:v1 .
+
   # shorten the commands to run ansible inside of docker
   demo:
     cmds:
