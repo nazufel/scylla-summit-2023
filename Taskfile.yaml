@@ -1,0 +1,23 @@
+version: '3'
+
+tasks:
+
+  # shorten the commands to run ansible inside of docker
+  demo:
+    cmds:
+      - docker compose exec controller /bin/bash
+
+  # shorten the command to show server logs
+  logs:
+    cmds:
+      - docker compose logs -f server
+
+  # shorten and filter the docker compose command to show running containers
+  ps:
+    cmds: 
+      - docker compose ps | awk '{ print $1 }'
+
+  # shorten the command to run nodetool status inside of a scylla node
+  status:
+    cmds:
+      - docker compose exec scylla-node1 nodetool status
