@@ -26,3 +26,8 @@ tasks:
   status:
     cmds:
       - docker compose exec scylla-node1 nodetool status
+
+  # shorten the commands to stand up the demo
+  up:
+    cmds:
+      - docker compose up -d
